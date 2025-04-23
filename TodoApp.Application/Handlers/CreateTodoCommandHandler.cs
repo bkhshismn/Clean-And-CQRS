@@ -22,7 +22,9 @@ public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, int>
             Description = request.Description,
             IsCompleted = request.IsCompleted
         };
-        await _repository.AddAsync(todo);
+
+        await _repository.AddAsync(todo, cancellationToken);
+
         return todo.Id;
     }
 }

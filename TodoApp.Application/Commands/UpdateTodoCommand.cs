@@ -1,8 +1,10 @@
 ﻿using MediatR;
+using MediatR.Registration;
+
 
 namespace TodoApp.Application.Commands;
 
-public class UpdateTodoCommand : IRequest
+public class UpdateTodoCommand : IRequest<Unit>
 {
     public int Id { get; set; }
     public string? Title { get; set; }

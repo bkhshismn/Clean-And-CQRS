@@ -15,13 +15,13 @@ public class DeleteTodoCommandHandler : IRequestHandler<DeleteTodoCommand, Unit>
 
     public async Task<Unit> Handle(DeleteTodoCommand request, CancellationToken cancellationToken)
     {
-        var todo = await _repository.GetByIdAsync(request.Id);
-        if (todo == null)
+        var todo = await _repository.GetByIdAsync(request.Id, cancellationToken);
+        if (todo is null)
         {
-            throw new Exception($"Todo with ID {request.Id} not found.");
+            throw new KeyNotFoundException($"Todo with ID {request.Id} not found.");
         }
 
-        await _repository.DeleteAsync(request.Id);
+        await _repository.DeleteAsync(request.Id, cancellationToken);
         return Unit.Value;
     }
 }

@@ -17,16 +17,16 @@ public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand, Unit>
     public async Task<Unit> Handle(UpdateTodoCommand request, CancellationToken cancellationToken)
     {
         var todo = await _repository.GetByIdAsync(request.Id);
-        if (todo == null)
-        {
-            throw new Exception($"Todo with ID {request.Id} not found.");
-        }
+
+        if (todo is null)
+            throw new KeyNotFoundException($"Todo with ID {request.Id} was not found.");
 
         todo.Title = request.Title;
         todo.Description = request.Description;
         todo.IsCompleted = request.IsCompleted;
 
         await _repository.UpdateAsync(todo);
+
         return Unit.Value;
     }
 }

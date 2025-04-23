@@ -17,10 +17,10 @@ public class GetTodoByIdQueryHandler : IRequestHandler<GetTodoByIdQuery, TodoIte
     public async Task<TodoItem> Handle(GetTodoByIdQuery request, CancellationToken cancellationToken)
     {
         var todo = await _repository.GetByIdAsync(request.Id);
-        if (todo == null)
-        {
-            throw new Exception($"Todo with ID {request.Id} not found.");
-        }
+
+        if (todo is null)
+            throw new KeyNotFoundException($"Todo with ID {request.Id} was not found.");
+
         return todo;
     }
 }

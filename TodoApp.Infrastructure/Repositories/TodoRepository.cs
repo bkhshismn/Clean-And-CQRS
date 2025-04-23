@@ -1,49 +1,53 @@
-﻿namespace TodoApp.Infrastructure.Repositories;
-using TodoApp.Domain.Entities;
+﻿using TodoApp.Domain.Entities;
 using TodoApp.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using TodoApp.Infrastructure.Data;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using TodoApp.Infrastructure.Data;
 
-public class TodoRepository : ITodoRepository
+namespace TodoApp.Infrastructure.Repositories
 {
-    private readonly TodoDbContext _context;
-
-    public TodoRepository(TodoDbContext context)
+    public class TodoRepository : ITodoRepository
     {
-        _context = context;
-    }
+        private readonly TodoDbContext _context;
 
-    public async Task AddAsync(TodoItem todo)
-    {
-        await _context.TodoItems.AddAsync(todo);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task<TodoItem> GetByIdAsync(int id)
-    {
-        return await _context.TodoItems.FindAsync(id);
-    }
-
-    public async Task UpdateAsync(TodoItem todo)
-    {
-        _context.TodoItems.Update(todo);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task DeleteAsync(int id)
-    {
-        var todo = await _context.TodoItems.FindAsync(id);
-        if (todo != null)
+        public TodoRepository(TodoDbContext context)
         {
-            _context.TodoItems.Remove(todo);
-            await _context.SaveChangesAsync();
+            _context = context;
         }
-    }
 
-    public async Task<List<TodoItem>> GetAllAsync()
-    {
-        return await _context.TodoItems.ToListAsync();
+        public async Task<int> AddAsync(TodoItem todo, CancellationToken cancellationToken = default)
+        {
+            await _context.TodoItems.AddAsync(todo, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            return todo.Id;
+        }
+
+        public async Task<TodoItem?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _context.TodoItems.FindAsync(new object[] { id }, cancellationToken);
+        }
+
+        public async Task UpdateAsync(TodoItem todo, CancellationToken cancellationToken = default)
+        {
+            _context.TodoItems.Update(todo);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var todo = await _context.TodoItems.FindAsync(new object[] { id }, cancellationToken);
+            if (todo != null)
+            {
+                _context.TodoItems.Remove(todo);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        public async Task<List<TodoItem>> GetAllAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.TodoItems.ToListAsync(cancellationToken);
+        }
     }
 }

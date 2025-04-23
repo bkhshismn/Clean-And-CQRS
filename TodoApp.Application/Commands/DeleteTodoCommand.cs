@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using MediatR.Registration;
+
 
 namespace TodoApp.Application.Commands;
 

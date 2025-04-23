@@ -4,8 +4,6 @@ using TodoApp.Application.Commands;
 using TodoApp.Application.Queries;
 using TodoApp.Domain.Entities;
 
-namespace TodoApp.Presentation.Controllers;
-
 [ApiController]
 [Route("api/todos")]
 public class TodosController : ControllerBase
@@ -47,10 +45,10 @@ public class TodosController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<int>> CreateTodo([FromBody] CreateTodoCommand command)
+    public async Task<ActionResult<TodoItem>> CreateTodo([FromBody] CreateTodoCommand command)
     {
-        var id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetTodoById), new { id }, id);
+        var todoItem = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetTodoById), new { id = todoItem }, todoItem);
     }
 
     // PUT: api/todos/5
